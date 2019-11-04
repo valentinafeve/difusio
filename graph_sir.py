@@ -16,7 +16,7 @@ import pandas as pd
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-dict = {'G':nx.random_geometric_graph(1, 1), 'rate': 0.2, 'infected_nodes_info': {}, 'clicks':0}
+dict = {'G':nx.random_geometric_graph(1, 1), 'rate': 0.2, 'recovery':'0.2', 'infected_nodes_info': {}, 'clicks':0}
 wait_ies = {'drawing': True}
 results = {'s_results': []}
 
@@ -30,7 +30,7 @@ app.layout = html.Div(className='row', children=[
         html.Div([
         html.Div([
             html.Div([
-                html.H1('SI simulation', style={'color': '#CC6060', 'fontSize': 26}),
+                html.H1('SIR simulation', style={'color': '#CC6060', 'fontSize': 26}),
                 html.Div([
                 html.P('Nodos totales', className='my-class', id='n_p'),
                 html.Div([
@@ -59,6 +59,14 @@ app.layout = html.Div(className='row', children=[
                 dcc.Slider(id="rate", min=0, max=1, value=0.5, step=0.1,
                 className="row"),
                 html.Div(id='nodes_rate_div'),
+                ]),
+                ],style={'margin':'30px'}),
+                html.Div([
+                html.P('Recovery rate', className='my-class', id='recovery_p'),
+                html.Div([
+                dcc.Slider(id="recovery", min=0, max=1, value=0.5, step=0.1,
+                className="row"),
+                html.Div(id='nodes_recovery_div'),
                 ]),
                 ],style={'margin':'30px'}),
                 html.Button('Simulate', id='button', className='ui fluid red button'),
@@ -112,9 +120,22 @@ def update_infected():
     print("Infected nodes updated")
     return
 
+def recover_infected():
+    recovery = dict['recovery']
+    # Randomly recovering nodes
+    infected_nodes_info = dict['infected_nodes_info'].copy()
+    temp_infected_nodes_info = dict['infected_nodes_info'].copy()
+    for node in infected_nodes_info:
+        posibility = [True] * int(recovery * 10) + [False] * int((1-recovery)*10)
+        if random.choice(posibility):
+            # Recover node
+            temp_infected_nodes_info.pop(node)
+    dict['infected_nodes_info'] = temp_infected_nodes_info
+    return
+
 def draw_a_graph():
     G = dict['G'].copy()
-    infected_nodes_info = dict['infected_nodes_info']
+    infected_nodes_info = dict['infected_nodes_info'].copy()
     print("Drawing graph")
     pos = nx.get_node_attributes(G, 'pos')
     dmin = 1
@@ -174,13 +195,15 @@ def draw_a_graph():
     State("nodes_num", "value"),
     State("nodes_infected", "value"),
     State("radius", "value"),
-    State("rate","value")
+    State("rate","value"),
+    State("recovery","value")
     ]
     )
 
 
-def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate):
+def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate, recovery):
     dict['rate']=rate
+    dict['recovery']=recovery
     if n_clicks is None or n_clicks > dict['clicks']:
         print("Clicked")
         print("Creating graph")
@@ -212,6 +235,9 @@ def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate):
 
     G = dict['G']
     rate = dict['rate']
+
+    # Randomly recovering nodes
+    recover_infected()
 
     # Update infected nodes in graph
     update_infected()
