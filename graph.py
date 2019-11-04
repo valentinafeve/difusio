@@ -28,32 +28,34 @@ def set_my_graph(temp_graph):
 
 app.layout = html.Div(className='row', children=[
         html.Div([
-        html.H1('Virus spread simulation', style={'color': '#333399', 'fontSize': 26}),
         html.Div([
-            html.P('Nodos totales', className='my-class', id='n_p'),
             html.Div([
-            dcc.Slider(id="nodes_num", min=5, max=100, value=10, step=10, updatemode="drag",
-            marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50", 60:"60", 70:"70", 80:"80", 90:"90", 100:"100"}, className="row"),
-            html.Div(id='nodes_num_div')
-            ], style={'margin-bottom': '20px', 'fontSize': 14}),
-        ], style={'margin':'20px'}),
-        html.Div([
-            html.P('Nodos infectados', className='my-class', id='i_p'),
-            html.Div([
-            dcc.Slider(id="nodes_infected", min=5, max=100, value=5, step=1, updatemode="drag",
-            marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
-            html.Div(id='nodes_i_div'),
-            ], style={'margin-bottom': '20px', 'fontSize': 14}),
-        ],style={'margin':'20px'}),
-        html.Div([
-            html.P('Radio', className='my-class', id='r_p'),
-            html.Div([
-            dcc.Slider(id="radius", min=0, max=1, value=0.5, step=0.1,
-            className="row"),
-            html.Div(id='nodes_rad_div'),
-            ], style={'marginBottom': '20px', 'fontSize': 14}),
-        ],style={'margin':'20px'}),
-        html.Button('Simulate', id='button', className='ui fluid green button'),
+                html.H1('Virus spread simulation', style={'color': '#CC6060', 'fontSize': 26}),
+                html.Div([
+                html.P('Nodos totales', className='my-class', id='n_p'),
+                html.Div([
+                dcc.Slider(id="nodes_num", min=5, max=100, value=10, step=10, updatemode="drag",
+                marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50", 60:"60", 70:"70", 80:"80", 90:"90", 100:"100"}, className="row"),
+                ]),
+                ], style={'margin':'30px'}),
+                html.Div([
+                html.P('Nodos infectados', className='my-class', id='i_p'),
+                html.Div([
+                dcc.Slider(id="nodes_infected", min=5, max=100, value=5, step=1, updatemode="drag",
+                marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
+                ]),
+                ],style={'margin':'30px'}),
+                html.Div([
+                html.P('Radio', className='my-class', id='r_p'),
+                html.Div([
+                dcc.Slider(id="radius", min=0, max=1, value=0.5, step=0.1,
+                className="row"),
+                html.Div(id='nodes_rad_div'),
+                ]),
+                ],style={'margin':'30px'}),
+                html.Button('Simulate', id='button', className='ui fluid red button'),
+            ], className="content")
+        ], className="ui card"),
         html.Div([
             html.Div([
                 html.Div([
@@ -70,9 +72,10 @@ app.layout = html.Div(className='row', children=[
         dcc.Graph(id="my-graph"),
         dcc.Interval(
             id='interval-component',
+            # Current interval
             n_intervals=0,
 
-            # Tiempo en segundos
+            # Time in seconds
             interval=10000,
         )
         ], className='eight columns'),
@@ -169,6 +172,7 @@ def draw_a_graph():
 
 def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius):
     if n_clicks is None or n_clicks > dict['clicks']:
+        interval_n = 0
         print("Clicked")
         print("Creating graph")
         dict['clicks']+=1
