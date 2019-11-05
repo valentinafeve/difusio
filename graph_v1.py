@@ -12,6 +12,7 @@ import time
 import datetime
 import pandas as pd
 
+
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
@@ -40,8 +41,7 @@ app.layout = html.Div(className='row', children=[
         ], style={'margin-bottom': '20px', 'fontSize': 14}),
         html.P('Radio', className='my-class', id='r_p'),
         html.Div([
-            dcc.Slider(id="radius", min=0, max=3, value=1, step=0.1, className="row"),
-            html.P('Nodos infectados', className='my-class', id='i_radius'),
+            dcc.Slider(id="radius", min=0, max=1, value=1, step=0.1, className="row"),
             html.Div(id='nodes_num_container_dos')
         ], style={'marginBottom': '20px', 'fontSize': 14}),
         html.Button('Simulate', id='button', className='ui fluid green button'),
@@ -52,13 +52,12 @@ app.layout = html.Div(className='row', children=[
         dcc.Graph(id="my-graph"),
         # Segundo grafo
         dcc.Graph(id="my-graph-2"),
-        html.Div(id='my-div'),
         dcc.Interval(
             id='interval-component',
             n_intervals=0,
 
             # Tiempo en segundos
-            interval=5*1000,
+            interval=5000,
         )
         ], className='eight columns'),
     ])
@@ -84,9 +83,10 @@ def create_graph(n_clicks, n, nodes_infected, radius):
     infected_nodes_info = dict['infected_nodes_info']
     infected = 0
     cont = 0
+
     while infected < nodes_infected and cont<n:
         print("Infecting...")
-        randy = random.randint(0, n+1)
+        randy = random.randint(0, n-1)
         if randy not in infected_nodes_info:
             infected_nodes_info[randy] = True
             infected += 1
@@ -146,24 +146,33 @@ def create_graph(n_clicks, n, nodes_infected, radius):
 
 def update_graph(n):
     print("Updating graph")
-    infected_nodes_info = dict['infected_nodes_info']
+    infected_nodes_info = dict['infected_nodes_info'].copy()
     G = dict['G']
     rate = dict['rate']
 
-    temp_infected_nodes_info = {}
-    print(infected_nodes_info)
-    for node in G.nodes():
+    # Updating infected
+    temp_infected_nodes_info = infected_nodes_info.copy()
+    print(G.nodes())
+    for node in infected_nodes_info:
         for neighbor in G.neighbors(node):
-            if node in infected_nodes_info:
+            if not neighbor in infected_nodes_info:
                 posibility = [True] * int(rate * 10) + [False] * int((1-rate)*10)
                 if random.choice(posibility):
                     temp_infected_nodes_info[neighbor] = True
 
     dict['infected_nodes_info'] = temp_infected_nodes_info
+    print("Intervalo: ")
+    print(n)
+    print("Vector de estado de infección:")
+    print(infected_nodes_info)
+    print("Número de nodos infectados:")
+    print(len(dict['infected_nodes_info']))
+    print("Número de nodos totales:")
+    print(len(G.nodes()))
+
     pos = nx.get_node_attributes(G, 'pos')
     dmin = 1
     ncenter = 0
-    print("Putting nodes in plane")
     for n in pos:
         x, y = pos[n]
         d = (x - 0.5) ** 2 + (y - 0.5) ** 2
@@ -201,8 +210,8 @@ def update_graph(n):
                                   margin={'b': 20, 'l': 5, 'r': 5, 't': 40},
                                   xaxis={'showgrid': False, 'zeroline': False, 'showticklabels': False},
                                   yaxis={'showgrid': False, 'zeroline': False, 'showticklabels': False})}
-    print(dict['G'].nodes())
     dict['G'] = G
+    print("Updated graph")
     return figure
 
 if __name__ == '__main__':
