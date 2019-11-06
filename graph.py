@@ -16,7 +16,7 @@ import pandas as pd
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-dict = {'G':nx.random_geometric_graph(1, 1), 'rate': 0.2, 'infected_nodes_info': {}, 'clicks':0}
+dict = {'G':nx.random_geometric_graph(1, 1), 'rate': 0.2, 'infected_nodes_info': {}, 'clicks':0, 'global_interval':0}
 wait_ies = {'drawing': True}
 results = {'s_results': []}
 
@@ -49,6 +49,7 @@ app.layout = html.Div(className='row', children=[
                 html.P('Radio', className='my-class', id='r_p'),
                 html.Div([
                 dcc.Slider(id="radius", min=0, max=1, value=0.5, step=0.1,
+                marks={0: "0", 0.1:"0.1", 0.2:"0.2", 0.3:"0.3", 0.4:"0.4", 0.5:"0.5", 0.6:"0.6", 0.7:"0.7", 0.8:"0.8", 0.9:"0.9", 1:"1"},
                 className="row"),
                 html.Div(id='nodes_rad_div'),
                 ]),
@@ -57,24 +58,24 @@ app.layout = html.Div(className='row', children=[
                 html.P('Infection rate', className='my-class', id='rate_p'),
                 html.Div([
                 dcc.Slider(id="rate", min=0, max=1, value=0.5, step=0.1,
-                className="row"),
+                marks={0: "0", 0.1:"0.1", 0.2:"0.2", 0.3:"0.3", 0.4:"0.4", 0.5:"0.5", 0.6:"0.6", 0.7:"0.7", 0.8:"0.8", 0.9:"0.9", 1:"1"},className="row"),
                 html.Div(id='nodes_rate_div'),
                 ]),
                 ],style={'margin':'30px'}),
                 html.Button('Simulate', id='button', className='ui fluid red button'),
-            ], className="content")
-        ], className="ui card"),
+            ], className="content", style={'width':'100%'})
+        ], className="ui card", style={'width':'80%'}),
         html.Div([
             html.Div([
                 html.Div([
                 html.P('Results')
                 ], className='header'),
                 html.P('All results will be shown here.', id='p_results')
-            ], className='content')
-        ],className='ui card')
+            ], className='content', style={'width':'100%'})
+        ],className='ui card', style={'width':'80%'})
 
 
-        ], className='three columns', style={'margin': '30px', 'fontSize': 14}),
+        ], className='four columns', style={'margin': '20px', 'fontSize': 14}),
         html.Div([
         # Primer grafo
         dcc.Graph(id="my-graph"),
@@ -86,7 +87,7 @@ app.layout = html.Div(className='row', children=[
             # Time in seconds
             interval=10000,
         )
-        ], className='eight columns'),
+        ], className='seven columns'),
     ])
 
 
@@ -182,9 +183,9 @@ def draw_a_graph():
 def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate):
     dict['rate']=rate
     if n_clicks is None or n_clicks > dict['clicks']:
-        print("Clicked")
         print("Creating graph")
         dict['clicks']+=1
+        dict['global_interval']=interval_n
         dict['infected_nodes_info']={}
         infected_nodes_info = dict['infected_nodes_info']
         infected = 0
@@ -216,9 +217,10 @@ def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate):
     # Update infected nodes in graph
     update_infected()
 
+    global_interval = dict['global_interval']
     # Print information
     results['s_results']=[html.P('Interval:'),
-    html.P(str(interval_n)),
+    html.P(str(interval_n-global_interval)),
     html.P('Total nodes:'),
     html.P(str(len(G.nodes()))),
     html.P('Number of infected nodes'),
