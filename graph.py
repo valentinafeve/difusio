@@ -34,14 +34,14 @@ app.layout = html.Div(className='row', children=[
                 html.Div([
                 html.P('Nodos totales', className='my-class', id='n_p'),
                 html.Div([
-                dcc.Slider(id="nodes_num", min=5, max=100, value=10, step=10, updatemode="drag",
-                marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50", 60:"60", 70:"70", 80:"80", 90:"90", 100:"100"}, className="row"),
+                dcc.Slider(id="nodes_num", min=5, max=50, value=10, step=10, updatemode="drag",
+                marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
                 ]),
                 ], style={'margin':'30px'}),
                 html.Div([
                 html.P('Nodos infectados', className='my-class', id='i_p'),
                 html.Div([
-                dcc.Slider(id="nodes_infected", min=5, max=100, value=5, step=1, updatemode="drag",
+                dcc.Slider(id="nodes_infected", min=5, max=50, value=5, step=1, updatemode="drag",
                 marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
                 ]),
                 ],style={'margin':'30px'}),
@@ -85,16 +85,26 @@ app.layout = html.Div(className='row', children=[
             n_intervals=0,
 
             # Time in seconds
-            interval=10000,
-        )
+            interval=15000,
+        ),
         ], className='seven columns'),
+        html.Div(
+        [
+            html.Div([
+                html.Div([
+                    html.P('Los nodos infectados serán mostrados en color rojo y los sanos en azul.', className='circle icon')
+                ], className='content', style={'width':'100%'})
+            ], className='ui card', style={'width': '100%'})
+        ], className='seven columns')
     ])
 
 
 def update_infected():
+
     G = dict['G']
     rate = dict['rate']
     print("Updating infected nodes...")
+
     # Updating infected
     infected_nodes_info = dict['infected_nodes_info'].copy()
     temp_infected_nodes_info = infected_nodes_info.copy()
@@ -135,10 +145,9 @@ def draw_a_graph():
         edge_trace['x'] += tuple([x0, x1, None])
         edge_trace['y'] += tuple([y0, y1, None])
     node_trace = go.Scatter(x=[], y=[], text=[], mode='markers', hoverinfo='text',
-                            marker={'showscale': True, 'colorscale': 'Picnic', 'reversescale': True, 'color': [],
+                            marker={'showscale': False, 'colorscale': 'Picnic', 'reversescale': True, 'color': [],
                                     'size': 10,
-                                    'colorbar': {'thickness': 10, 'xanchor': 'left',
-                                                 'titleside': 'right'},
+                                    'colorbar': {'thickness': 0},
                                     'line': {'width': 2}})
     nodes = G.nodes()
     to_iterate_arr = range(len(nodes))

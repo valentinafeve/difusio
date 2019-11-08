@@ -34,14 +34,14 @@ app.layout = html.Div(className='row', children=[
                 html.Div([
                 html.P('Nodos totales', className='my-class', id='n_p'),
                 html.Div([
-                dcc.Slider(id="nodes_num", min=5, max=100, value=10, step=10, updatemode="drag",
-                marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50", 60:"60", 70:"70", 80:"80", 90:"90", 100:"100"}, className="row"),
+                dcc.Slider(id="nodes_num", min=5, max=50, value=10, step=5, updatemode="drag",
+                marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
                 ]),
                 ], style={'margin':'30px'}),
                 html.Div([
                 html.P('Nodos infectados', className='my-class', id='i_p'),
                 html.Div([
-                dcc.Slider(id="nodes_infected", min=5, max=100, value=5, step=1, updatemode="drag",
+                dcc.Slider(id="nodes_infected", min=5, max=50, value=5, step=5, updatemode="drag",
                 marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
                 ]),
                 ],style={'margin':'30px'}),
@@ -49,6 +49,7 @@ app.layout = html.Div(className='row', children=[
                 html.P('Radio', className='my-class', id='r_p'),
                 html.Div([
                 dcc.Slider(id="radius", min=0, max=1, value=0.5, step=0.1,
+                marks={0: "0", 0.1:"0.1", 0.2:"0.2", 0.3:"0.3", 0.4:"0.4", 0.5:"0.5", 0.6:"0.6", 0.7:"0.7", 0.8:"0.8", 0.9:"0.9", 1:"1"},
                 className="row"),
                 html.Div(id='nodes_rad_div'),
                 ]),
@@ -57,7 +58,9 @@ app.layout = html.Div(className='row', children=[
                 html.P('Infection rate', className='my-class', id='rate_p'),
                 html.Div([
                 dcc.Slider(id="rate", min=0, max=1, value=0.5, step=0.1,
+                marks={0: "0", 0.1:"0.1", 0.2:"0.2", 0.3:"0.3", 0.4:"0.4", 0.5:"0.5", 0.6:"0.6", 0.7:"0.7", 0.8:"0.8", 0.9:"0.9", 1:"1"},
                 className="row"),
+
                 html.Div(id='nodes_rate_div'),
                 ]),
                 ],style={'margin':'30px'}),
@@ -65,13 +68,15 @@ app.layout = html.Div(className='row', children=[
                 html.P('Recovery rate', className='my-class', id='recovery_p'),
                 html.Div([
                 dcc.Slider(id="recovery", min=0, max=1, value=0.5, step=0.1,
+                marks={0: "0", 0.1:"0.1", 0.2:"0.2", 0.3:"0.3", 0.4:"0.4", 0.5:"0.5", 0.6:"0.6", 0.7:"0.7", 0.8:"0.8", 0.9:"0.9", 1:"1"},
                 className="row"),
+
                 html.Div(id='nodes_recovery_div'),
                 ]),
                 ],style={'margin':'30px'}),
                 html.Button('Simulate', id='button', className='ui fluid red button'),
-            ], className="content")
-        ], className="ui card"),
+            ], className="content", style={'width':'100%'})
+        ], className="ui card", style={'width':'100%'}),
         html.Div([
             html.Div([
                 html.Div([
@@ -155,7 +160,7 @@ def draw_a_graph():
         edge_trace['x'] += tuple([x0, x1, None])
         edge_trace['y'] += tuple([y0, y1, None])
     node_trace = go.Scatter(x=[], y=[], text=[], mode='markers', hoverinfo='text',
-                            marker={'showscale': True, 'colorscale': 'Picnic', 'reversescale': True, 'color': [],
+                            marker={'showscale': False, 'colorscale': 'Picnic', 'reversescale': True, 'color': [],
                                     'size': 10,
                                     'colorbar': {'thickness': 10, 'xanchor': 'left',
                                                  'titleside': 'right'},
