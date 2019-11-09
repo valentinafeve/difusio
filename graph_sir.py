@@ -6,6 +6,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import networkx as nx
 import plotly.graph_objs as go
+import plotly
 import random
 from dash.dependencies import Input, Output, State
 import time
@@ -16,7 +17,7 @@ import pandas as pd
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css','https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.4.1/semantic.css']
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 
-dict = {'G':nx.random_geometric_graph(1, 1), 'rate': 0.2, 'recovery':'0.2', 'infected_nodes_info': {}, 'clicks':0}
+dict = {'G':nx.random_geometric_graph(1, 1), 'rate': 0.2, 'recovery':'0.2', 'infected_nodes_info': {}, 'clicks':0, 'X':[], 'Y':[]}
 wait_ies = {'drawing': True}
 results = {'s_results': []}
 
@@ -99,7 +100,29 @@ app.layout = html.Div(className='row', children=[
             # Time in seconds
             interval=10000,
         )
-        ], className='eight columns'),
+        ], className='seven columns'),
+        html.Div(
+        [
+            html.Div([
+                html.Div([
+                    html.P('Los nodos infectados serán mostrados en color rojo y los sanos en azul.', className='circle icon')
+                ], className='content', style={'width':'100%'})
+            ], className='ui card', style={'width': '100%'})
+        ], className='seven columns'),
+        html.Div(
+        [
+
+        html.Div(
+        [
+            html.Div([
+                html.Div([
+                    dcc.Graph(id='my-graph-2'),
+                ], className='content')
+            ], className='ui card', style={'width': '100%'})
+        ]),
+        ], style={'display':'block', 'margin-top':'30px'}
+        )
+
     ])
 
 
@@ -191,6 +214,7 @@ def draw_a_graph():
 @app.callback(
     [
     Output("my-graph", "figure"),
+    Output("my-graph-2", "figure"),
     Output("p_results", "children")
     ],
     [Input('button', 'n_clicks'),
@@ -212,6 +236,8 @@ def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate, recov
     if n_clicks is None or n_clicks > dict['clicks']:
         print("Clicked")
         print("Creating graph")
+        dict['X']=[]
+        dict['Y']=[]
         dict['clicks']+=1
         dict['infected_nodes_info']={}
         infected_nodes_info = dict['infected_nodes_info']
@@ -232,8 +258,9 @@ def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate, recov
         dict['G'] = G
         print("Trying to draw created")
         figure = draw_a_graph()
+        figure_2 = draw_scatter()
         wait_ies['drawing']=False
-        return figure, [html.P("Creating graph")]
+        return figure, figure_2, [html.P("Creating graph")]
 
     infected_nodes_info=dict['infected_nodes_info']
     print("Updating graph")
@@ -268,8 +295,38 @@ def m_graph(n_clicks, interval_n, nodes_num, nodes_infected, radius, rate, recov
     dict['G'] = G
     print("Trying to draw")
     figure = draw_a_graph()
+    figure_2 = draw_scatter()
     print("Updated graph")
-    return figure, results['s_results']
+    return figure, figure_2, results['s_results']
+
+def draw_scatter():
+    X = dict['X']
+    Y = dict['Y']
+
+    print("Plotting scatter")
+    print(X)
+    print(Y)
+    min_X = 0 if not X else min(X)-1
+    min_Y = 0 if not Y else min(Y)-1
+    max_X = 0 if not X else max(X)+1
+    max_Y = 0 if not Y else max(Y)+1
+    print("Drawing scatter graph ")
+
+    data = plotly.graph_objs.Scatter(
+            x=list(X),
+            y=list(Y),
+            name='Scatter',
+            mode= 'markers'
+            )
+
+    data_for_plot = [data]
+    print(data_for_plot)
+    layout_go = go.Layout(
+                            xaxis={'range':[min_X, max_X]},
+                            yaxis={'range':[min_Y, max_Y]}
+                            )
+    figure = {'data': data_for_plot, 'layout' : layout_go}
+    return figure
 
 if __name__ == '__main__':
     app.run_server(debug=True)
