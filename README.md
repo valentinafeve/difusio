@@ -5,5 +5,5 @@ A simulation of the SI and the SIR model for virus propagation. Web application 
 * pandas
 * networkx
 
-## Deployment
+## Preview
 ![Difusio](https://i.imgur.com/Yf7vKy9.png)
