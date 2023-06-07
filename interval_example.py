@@ -24,6 +24,7 @@ app.layout = html.Div(
     ]
 )
 
+
 @app.callback(Output('live-graph', 'figure'),
               [Input('graph-update', 'interval')])
 def update_graph_scatter(interval):
@@ -39,7 +40,6 @@ def update_graph_scatter(interval):
 
     return {'data': [data],'layout' : go.Layout(xaxis=dict(range=[min(X),max(X)]),
                                                 yaxis=dict(range=[min(Y),max(Y)]),)}
-
 
 
 if __name__ == '__main__':
