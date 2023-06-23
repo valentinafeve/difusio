@@ -37,21 +37,21 @@ app.layout = html.Div(className='row', children=[
             html.Div([
                 html.H1('SIR simulation', style={'color': '#CC6060', 'fontSize': 26}),
                 html.Div([
-                    html.P('Nodos totales', className='my-class', id='n_p'),
+                    html.P('Total nodes', className='my-class', id='n_p'),
                     html.Div([
                         dcc.Slider(id="nodes_num", min=5, max=50, value=10, step=5, updatemode="drag",
                                    marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
                     ]),
                 ], style={'margin': '30px'}),
                 html.Div([
-                    html.P('Nodos infectados', className='my-class', id='i_p'),
+                    html.P('Infected nodes', className='my-class', id='i_p'),
                     html.Div([
                         dcc.Slider(id="nodes_infected", min=5, max=50, value=5, step=5, updatemode="drag",
                                    marks={5: "5", 10: "10", 20: "20", 30: "30", 40: "40", 50: "50"}, className="row"),
                     ]),
                 ], style={'margin': '30px'}),
                 html.Div([
-                    html.P('Radio', className='my-class', id='r_p'),
+                    html.P('Ratio', className='my-class', id='r_p'),
                     html.Div([
                         dcc.Slider(id="radius", min=0, max=1, value=0.5, step=0.1,
                                    marks={0: "0", 0.1: "0.1", 0.2: "0.2", 0.3: "0.3", 0.4: "0.4", 0.5: "0.5",
@@ -111,7 +111,7 @@ app.layout = html.Div(className='row', children=[
         [
             html.Div([
                 html.Div([
-                    html.P('Los nodos infectados serán mostrados en color rojo y los sanos en azul.',
+                    html.P('Infected nodes are shown in red and not infected nodes are shown in blue.',
                            className='circle icon')
                 ], className='content', style={'width': '100%'})
             ], className='ui card', style={'width': '100%'})
